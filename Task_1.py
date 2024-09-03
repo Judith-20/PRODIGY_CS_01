@@ -1,148 +1,75 @@
-letters = "abcdefghijklmnopqrstuvwxyz"
-num_letters = len(letters)
+from tkinter import *
+from tkinter import simpledialog, messagebox
 
+root = Tk()
+root.geometry("500x350")
+root.title("Caesar Cipher Encryption and Decryption")
+
+# letters = "abcdefghijklmnopqrstuvwxyz"
+characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/~`"  # Include special characters and numbers
+num_characters = len(characters)
+
+# Function to encrypt the text
 def encrypt(plaintext, key):
     ciphertext = ""
-    for letter in plaintext:
-        if letter.isalpha():  # Check if the character is a letter
-            is_upper = letter.isupper()  # Check if it's uppercase
-            letter = letter.lower()  # Convert to lowercase for processing
-            index = letters.find(letter)
-            new_index = index + key
-            if new_index >= num_letters:
-                new_index -= num_letters
-            new_letter = letters[new_index]
-            if is_upper:  # Convert back to uppercase if needed
-                new_letter = new_letter.upper()
-            ciphertext += new_letter
+    for char in plaintext:
+        if char in characters:
+            index = characters.find(char)
+            new_index = (index + key) % num_characters
+            ciphertext += characters[new_index]
         else:
-            ciphertext += letter  # Keep spaces and non-letters as they are
+            ciphertext += char  # Keep characters not in the list as they are
 
     return ciphertext
 
+
+# Decrypting the text
 def decrypt(ciphertext, key):
     plaintext = ""
-    for letter in ciphertext:
-        if letter.isalpha():  # Check if the character is a letter
-            is_upper = letter.isupper()  # Check if it's uppercase
-            letter = letter.lower()  # Convert to lowercase for processing
-            index = letters.find(letter)
-            new_index = index - key
-            if new_index < 0:
-                new_index += num_letters
-            new_letter = letters[new_index]
-            if is_upper:  # Convert back to uppercase if needed
-                new_letter = new_letter.upper()
-            plaintext += new_letter
+    for char in ciphertext:
+        if char in characters:
+            index = characters.find(char)
+            new_index = (index - key) % num_characters
+            plaintext += characters[new_index]
         else:
-            plaintext += letter  # Keep spaces and non-letters as they are
+            plaintext += char  # Keep characters not in the list as they are
 
     return plaintext
 
-print()
-print("*** CAESAR CIPHER PROGRAM ***")
-print()
 
-while True:
-    user_input = input("Do you want to encrypt or decrypt (e/d)? ").lower()
-    if user_input in ["e", "d"]:
-        break
-    else:
-        print("Invalid input! Please enter 'e' for encryption or 'd' for decryption.")
-        print()
+# User Input
+def get_user_choice():
+    return simpledialog.askstring("Input", "Do you want to encrypt or decrypt (e/d)?").lower()
 
-print()
+def get_key():
+    return simpledialog.askinteger("Input", "Enter the key (1 through 94):")
 
-if user_input == "e":
-    print("ENCRYPTION MODE SELECTED")
-    print()
-    key = int(input("Enter the key (1 through 26): "))
-    text = input("Enter the text to encrypt: ")
-    ciphertext = encrypt(text, key)
-    print(f'CIPHERTEXT: {ciphertext}')
+def get_text_to_process(action):
+    title = "Encryption Mode Selected" if action == "encrypt" else "Decryption Mode Selected"
+    return simpledialog.askstring(title, f"Enter the text to {action}:")
 
-elif user_input == "d":
-    print("DECRYPTION MODE SELECTED")
-    print()
-    key = int(input("Enter the key (1 through 26): "))
-    text = input("Enter the text to decrypt: ")
-    plaintext = decrypt(text, key)
-    print(f'PLAINTEXT: {plaintext}')
-    
-    
-    # letters = "abcdefghijklmnopqrstuvwxyz"
-# num_letters = len(letters)
+def main():
+    user_input = get_user_choice()
+    if user_input not in ["e", "d"]:
+        messagebox.showerror("Error", "Invalid input! Please enter 'e' for encryption or 'd' for decryption.")
+        return
 
-# def encrypt(plaintext, key):
-#     ciphertext = ""
-#     for letter in plaintext:
-#         letter = letter.lower()
-#         if letter != " ":
-#             index = letters.find(letter)
-#             if index == -1:
-#                 ciphertext += letter
-#             else:
-#                 new_index = index + key
-#                 if new_index >= num_letters:
-#                     new_index -= num_letters
-#                 ciphertext += letters[new_index]
-#         else:
-#             ciphertext += letter  # Keep spaces as is
+    key = get_key()
+    if not (1 <= key <= num_characters):
+        messagebox.showerror("Error", "Key must be between 1 and 94.")
+        return
 
-#     return ciphertext
+    text = get_text_to_process("encrypt" if user_input == "e" else "decrypt")
 
-
-# def decrypt(ciphertext, key):
-#     plaintext = ""
-#     for letter in ciphertext:
-#         letter = letter.lower()
-#         if letter != " ":
-#             index = letters.find(letter)
-#             if index == -1:
-#                 plaintext += letter
-#             else:
-#                 new_index = index - key
-#                 if new_index < 0:
-#                     new_index += num_letters
-#                 plaintext += letters[new_index]
-#         else:
-#             plaintext += letter  # Keep spaces as is
-
-#     return plaintext
-
-
-# print()
-# print("*** CAESAR CIPHER PROGRAM ***")
-# print()
-
-# # print("Do you want to encrypt or decrypt?")
-
-# # user_input = input("e/d: ").lower()
-# # print()
-
-# while True:
-#     user_input = input("Do you want to encrypt or decrypt (e/d)? ").lower()
-#     if user_input in ["e", "d"]:
-#         break
-#     else:
-#         print("Invalid input! Please enter 'e' for encryption or 'd' for decryption.")
-#         print()
-
-# print()
-
-# if user_input == "e":
-#     print("ENCRYPTION MODE SELECTED")
-#     print()
-#     key = int(input("Enter the key (1 through 26): "))
-#     text = input("Enter the text to encrypt: ")
-#     ciphertext = encrypt(text, key)
-#     print(f'CIPHERTEXT: {ciphertext}')
-
-# elif user_input == "d":
-#     print("DECRYPTION MODE SELECTED")
-#     print()
-#     key = int(input("Enter the key (1 through 26): "))
-#     text = input("Enter the text to decrypt: ")
-#     plaintext = decrypt(text, key)
-#     print(f'PLAINTEXT: {plaintext}')
+    if user_input == "e":
+        ciphertext = encrypt(text, key)
+        messagebox.showinfo("Ciphertext", f'CIPHERTEXT: {ciphertext}')
+        print(f'CIPHERTEXT: {ciphertext}')
+    elif user_input == "d":
+        plaintext = decrypt(text, key)
+        messagebox.showinfo("Plaintext", f'PLAINTEXT: {plaintext}')
+        print(f'PLAINTEXT: {plaintext}')
+if __name__ == "__main__":
+    main()
+    root.mainloop()
 
